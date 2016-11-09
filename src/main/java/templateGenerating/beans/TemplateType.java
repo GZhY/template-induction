@@ -1,8 +1,7 @@
 package templateGenerating.beans;
 
 /**
- * This is a XXX class.
- * What is the function of this class?
+ * This is a TemplateType enum.
  *
  * @author GZhY
  * @version 1.0
