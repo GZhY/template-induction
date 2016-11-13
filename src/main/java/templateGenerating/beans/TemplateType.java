@@ -7,4 +7,5 @@ package templateGenerating.beans;
  * @version 1.0
  */
 public enum TemplateType {
+    XPATH, Selector
 }
