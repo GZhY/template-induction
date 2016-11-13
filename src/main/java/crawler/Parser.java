@@ -44,4 +44,8 @@ public class Parser {
         }
     }
 
+    public static Document filePath2Document(String filePath){
+        return filePath2Document(filePath, "");
+    }
+
 }
