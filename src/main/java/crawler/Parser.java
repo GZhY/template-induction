@@ -35,7 +35,20 @@ public class Parser {
         return Jsoup.parse(html);
     }
 
-    public static Document filePath2Document(String filePath, String baseUri){
+    public static Document file2Document(File file, String baseUri) {
+        try {
+            return Jsoup.parse(file, "UTF-8", baseUri);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Document file2Document(File file) {
+        return file2Document(file, "");
+    }
+
+    public static Document filePath2Document(String filePath, String baseUri) {
         try {
             return Jsoup.parse(new File(filePath), "UTF-8", baseUri);
         } catch (IOException e) {
@@ -44,7 +57,7 @@ public class Parser {
         }
     }
 
-    public static Document filePath2Document(String filePath){
+    public static Document filePath2Document(String filePath) {
         return filePath2Document(filePath, "");
     }
 
