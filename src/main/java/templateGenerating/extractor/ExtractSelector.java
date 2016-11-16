@@ -37,7 +37,7 @@ public class ExtractSelector extends ExtractTemplate {
     }
 
     private String getExpression(Node n) {
-        String attribute = n.attributes().get("class").replace(" ", ".");
+        String attribute = n.attributes().get("class").trim().replace(" ", ".");
         return Objects.equals(attribute, "") ? n.nodeName() : n.nodeName() + "." + attribute;
     }
 
