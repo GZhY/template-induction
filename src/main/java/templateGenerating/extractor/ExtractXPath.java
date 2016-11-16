@@ -28,7 +28,7 @@ public class ExtractXPath extends ExtractTemplate{
     }
 
     @Override
-    protected String getTemplate(final Node n) {
+    protected String getTemplate(Node n) {
         return null;// TODO: 2016/11/15
     }
 }

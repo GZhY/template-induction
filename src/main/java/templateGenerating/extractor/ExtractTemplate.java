@@ -32,7 +32,7 @@ public abstract class ExtractTemplate {
         this.document4Jsoup = document4Jsoup;
     }
 
-    protected abstract String getTemplate(final Node n);
+    protected abstract String getTemplate(Node n);
 
     public String getTemplate(String text) {
         Node n = text2Node(text);
