@@ -1,8 +1,15 @@
 import crawler.Parser;
 import org.jsoup.nodes.Document;
+import templateGenerating.beans.InputBean;
+import templateGenerating.beans.InputBeans;
+import templateGenerating.beans.Record;
+import templateGenerating.beans.Template;
 import templateGenerating.extractor.ExtractSelector;
 import templateGenerating.extractor.ExtractTemplate;
 import utils.JacksonHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is a XXX class.
@@ -25,10 +32,14 @@ public class ExtractTemplateTest {
     }
 
     private static void test3() {
-        System.out.println("classpath路径： "+ExtractTemplateTest.class.getClassLoader().getResource("").getPath());
-        //获取当前类的加载路径
-        System.out.println("当前类加载路径： "+ExtractTemplateTest.class.getResource("").getPath());
-        JacksonHelper.jsonFile2Beans(ExtractTemplateTest.class.getClassLoader().getResource("test.json").getPath());
+        //System.out.println("classpath路径： "+ExtractTemplateTest.class.getClassLoader().getResource("").getPath());
+        //System.out.println("当前类加载路径： "+ExtractTemplateTest.class.getResource("").getPath());
+        InputBeans inputBeans = JacksonHelper.jsonFile2Beans(ExtractTemplateTest.class.getClassLoader().getResource("test.json").getPath());
+        ExtractTemplate extractTemplate = new ExtractSelector(Parser.url2Document(inputBeans.getUrl()));
+        List<Record> records = new ArrayList<>();
+        records.add(new Record(inputBeans.getInputBeans().get(1), InputBean.class));
+        Template template = extractTemplate.getTemplate(records);
+        System.out.println(template);
     }
 
     public static void main(String[] args) {
