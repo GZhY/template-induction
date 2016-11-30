@@ -4,8 +4,11 @@ import crawler.Parser;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
+import templateGenerating.beans.Record;
+import templateGenerating.beans.Template;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * This is a XXX class.
@@ -16,8 +19,6 @@ import java.io.File;
  */
 public abstract class ExtractTemplate {
 
-    //protected String html2Extract;
-    //private Document document4w3c;
     protected org.jsoup.nodes.Document document4Jsoup;
 
     public ExtractTemplate(String html2Extract) {
@@ -32,16 +33,18 @@ public abstract class ExtractTemplate {
         this.document4Jsoup = document4Jsoup;
     }
 
-    protected abstract String getTemplate(Node n);
-
-    public String getTemplate(String text) {
-        Node n = text2Node(text);
-        return getTemplate(n);
-    }
+    protected abstract String getExpression(Node n);
 
     protected Node text2Node(String text) {
         return text2NodeByJsoup(text);
     }
+
+    public String getExpression(String text) {
+        Node n = text2Node(text);
+        return getExpression(n);
+    }
+
+    public abstract Template getTemplate(List<Record> records);
 
     /**
      * use jsoup selectors, such as:

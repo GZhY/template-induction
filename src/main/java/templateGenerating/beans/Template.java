@@ -11,8 +11,8 @@ import java.util.List;
  */
 public class Template {
 
-    TemplateType type;
-    List<String> expressions;
+    private TemplateType type;
+    private List<String> expressions;
 
     public TemplateType getType() {
         return type;

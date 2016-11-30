@@ -3,8 +3,11 @@ package templateGenerating.extractor;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Node;
+import templateGenerating.beans.Record;
+import templateGenerating.beans.Template;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * This is a XXX class.
@@ -28,7 +31,12 @@ public class ExtractXPath extends ExtractTemplate{
     }
 
     @Override
-    protected String getTemplate(Node n) {
+    protected String getExpression(Node n) {
         return null;// TODO: 2016/11/15
+    }
+
+    @Override
+    public Template getTemplate(List<Record> records) {
+        return null;
     }
 }

@@ -2,8 +2,13 @@ package templateGenerating.extractor;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Node;
+import templateGenerating.beans.Record;
+import templateGenerating.beans.Template;
+import templateGenerating.beans.TemplateType;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -27,18 +32,39 @@ public class ExtractSelector extends ExtractTemplate {
         super(document4Jsoup);
     }
 
+    private String getExpressionHelper(Node n) {
+        String attribute = n.attributes().get("class").trim().replace(" ", ".");
+        return Objects.equals(attribute, "") ? n.nodeName() : n.nodeName() + "." + attribute;
+    }
+
     @Override
-    protected String getTemplate(Node n) {
+    protected String getExpression(Node n) {
         if (n == null) return null;
-        String expression = getExpression(n);
-        while ((n = n.parent()) != null && !Objects.equals(n.nodeName(), "body"))
-            expression = getExpression(n) + ">" + expression;
+        String expression = getExpressionHelper(n);
+        while ((n = n.parent()) != null && !Objects.equals(n.nodeName(), "body")) {
+            expression = getExpressionHelper(n) + ">" + expression;
+        }
         return expression;
     }
 
-    private String getExpression(Node n) {
-        String attribute = n.attributes().get("class").trim().replace(" ", ".");
-        return Objects.equals(attribute, "") ? n.nodeName() : n.nodeName() + "." + attribute;
+    @Override
+    public Template getTemplate(List<Record> records) {
+        Template template = new Template();
+        template.setType(TemplateType.Selector);
+        List<List<String>> recordExpressions = new ArrayList<>();
+        records.forEach(record -> {
+            List<String> itemExpressions = new ArrayList<>();
+            record.getItems().forEach(s -> itemExpressions.add(getExpression(s)));
+            recordExpressions.add(itemExpressions);
+        });
+        template.setExpressions(generalizeExpression(recordExpressions));
+        return template;
+    }
+
+    private List<String> generalizeExpression(List<List<String>> recordExpressions) {
+        List<String> itemExpressions = new ArrayList<>();
+        itemExpressions = recordExpressions.get(0);
+        return itemExpressions;
     }
 
 }
