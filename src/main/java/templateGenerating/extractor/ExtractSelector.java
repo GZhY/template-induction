@@ -61,10 +61,4 @@ public class ExtractSelector extends ExtractTemplate {
         return template;
     }
 
-    private List<String> generalizeExpression(List<List<String>> recordExpressions) {
-        List<String> itemExpressions = new ArrayList<>();
-        itemExpressions = recordExpressions.get(0);
-        return itemExpressions;
-    }
-
 }

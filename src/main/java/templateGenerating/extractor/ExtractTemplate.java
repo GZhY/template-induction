@@ -8,6 +8,7 @@ import templateGenerating.beans.Record;
 import templateGenerating.beans.Template;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,10 +53,33 @@ public abstract class ExtractTemplate {
      * to get <strong>first</strong> corresponding node
      */
     protected Node text2NodeByJsoup(String text) {
-        if(text == null || document4Jsoup == null) return null;
+        if (text == null || document4Jsoup == null) return null;
         Elements elements = document4Jsoup.select(":containsOwn(" + text + ")");
         Node node = elements.first();
         return node;
+    }
+
+    private String findCommmonPrefix(String str1, String str2) {
+        int index = 0;
+        for (int i = 0; i < str1.length() && i < str2.length(); i++) {
+            if (str1.charAt(i) == str2.charAt(i)) index++;
+            else break;
+        }
+        return str1.substring(0, index);
+    }
+
+    protected List<String> generalizeExpression(List<List<String>> recordExpressions) {
+        if (recordExpressions == null || recordExpressions.size() == 0) return null;
+        List<String> itemExpressions = new ArrayList<>();
+        for (int j = 0; j < recordExpressions.get(0).size(); j++) {
+            String str = null;
+            for (int i = 0; i < recordExpressions.size(); i++) {
+                if (str == null) str = recordExpressions.get(i).get(j);
+                else str = findCommmonPrefix(str, recordExpressions.get(i).get(j));
+            }
+            itemExpressions.add(str);
+        }
+        return itemExpressions;
     }
 
     //protected Node text2NodeByXPath(String text) {
