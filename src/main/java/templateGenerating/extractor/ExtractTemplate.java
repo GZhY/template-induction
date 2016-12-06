@@ -6,6 +6,7 @@ import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 import templateGenerating.beans.Record;
 import templateGenerating.beans.Template;
+import utils.SimilarityHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import java.util.List;
 public abstract class ExtractTemplate {
 
     protected org.jsoup.nodes.Document document4Jsoup;
+    private static final String LATERDISPOSETAG = " the-text-correspond-to-2-or-more-nodes;:";
 
     public ExtractTemplate(String html2Extract) {
         this.document4Jsoup = Parser.html2Document(html2Extract);
@@ -36,55 +38,68 @@ public abstract class ExtractTemplate {
 
     protected abstract String getExpression(Node n);
 
-    protected Node text2Node(String text) {
+    private Elements text2Node(String text) {
         return text2NodeByJsoup(text);
     }
 
     public String getExpression(String text) {
-        Node n = text2Node(text);
-        return getExpression(n);
+        Elements elements = text2Node(text);
+        if (elements == null || elements.size() == 0) return getExpression((Node) null);
+        if (elements.size() == 1) return getExpression(elements.first());
+        return LATERDISPOSETAG + text;
     }
 
     public abstract Template getTemplate(List<Record> records);
 
     /**
-     * use jsoup selectors, such as:
+     * Use jsoup selectors, such as:
      * :contains(text), :containsOwn(text), :matches(regex), :matchesOwn(regex),
-     * to get <strong>first</strong> corresponding node
+     * (Use XPath like //*[text()='text'])
+     * to get <strong>all</strong> corresponding nodes
      */
-    protected Node text2NodeByJsoup(String text) {
+    private Elements text2NodeByJsoup(String text) {
         if (text == null || document4Jsoup == null) return null;
-        Elements elements = document4Jsoup.select(":containsOwn(" + text + ")");
-        Node node = elements.first();
-        return node;
+        return document4Jsoup.select(":containsOwn(" + text + ")");
     }
 
-    private String findCommmonPrefix(String str1, String str2) {
-        int index = 0;
-        for (int i = 0; i < str1.length() && i < str2.length(); i++) {
-            if (str1.charAt(i) == str2.charAt(i)) index++;
-            else break;
+    private String mostSimilarExpression(List<String> expressions, List<String> otherExpressions) {
+        double maxSimilarity = 0;
+        String result = "";
+        for (String expression : expressions) {
+            double sim = 0;
+            for (String otherExpression : otherExpressions) {
+                double temp = SimilarityHelper.pathSimilarity(expression, otherExpression);
+                if (temp > sim) sim = temp;
+            }
+            if (sim > maxSimilarity) {
+                maxSimilarity = sim;
+                result = expression;
+            }
         }
-        return str1.substring(0, index);
+        return result;
     }
 
+    // TODO: 2016/12/5 remove xpath
     protected List<String> generalizeExpression(List<List<String>> recordExpressions) {
         if (recordExpressions == null || recordExpressions.size() == 0) return null;
         List<String> itemExpressions = new ArrayList<>();
         for (int j = 0; j < recordExpressions.get(0).size(); j++) {
             String str = null;
             for (int i = 0; i < recordExpressions.size(); i++) {
-                if (str == null) str = recordExpressions.get(i).get(j);
-                else str = findCommmonPrefix(str, recordExpressions.get(i).get(j));
+                String temp = recordExpressions.get(i).get(j);
+                if (str == null) str = temp;
+                else if (temp != null) {
+                    if (temp.startsWith(LATERDISPOSETAG)) {
+                        List<String> expressions = new ArrayList<>();
+                        Elements elements = text2Node(temp.replaceFirst(LATERDISPOSETAG, ""));
+                        elements.forEach(element -> expressions.add(getExpression(element)));
+                        temp = mostSimilarExpression(expressions, recordExpressions.get(i));
+                    }
+                    str = SimilarityHelper.findCommmonPrefix(str, temp);
+                }
             }
             itemExpressions.add(str);
         }
         return itemExpressions;
     }
-
-    //protected Node text2NodeByXPath(String text) {
-    //    // TODO: 2016/11/15 text2Node, Use XPath like //*[text()='text'],
-    //    return null;
-    //}
-
 }
