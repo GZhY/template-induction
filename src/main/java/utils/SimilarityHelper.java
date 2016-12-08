@@ -23,7 +23,7 @@ public class SimilarityHelper {
             if (str1.charAt(i) == str2.charAt(i)) index++;
             else break;
         }
-        if (str1.length() > 0 && str1.charAt(index - 1) == '>') index--;
+        if (index > 0 && str1.charAt(index - 1) == '>') index--;
         return str1.substring(0, index);
     }
 }
