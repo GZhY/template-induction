@@ -37,7 +37,7 @@ public class ExtractTemplateTest {
         InputBeans inputBeans = JacksonHelper.jsonFile2Beans(ExtractTemplateTest.class.getClassLoader().getResource("test.json").getPath());
         ExtractTemplate extractTemplate = new ExtractSelector(Parser.url2Document(inputBeans.getUrl()));
         List<Record> records = new ArrayList<>();
-        records.add(new Record(inputBeans.getInputBeans().get(1), InputBean.class));
+        inputBeans.getInputBeans().forEach(inputBean -> records.add(new Record(inputBean, InputBean.class)));
         Template template = extractTemplate.getTemplate(records);
         System.out.println(template);
     }

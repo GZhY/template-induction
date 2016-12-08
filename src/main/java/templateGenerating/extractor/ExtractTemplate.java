@@ -82,21 +82,26 @@ public abstract class ExtractTemplate {
     // TODO: 2016/12/5 remove xpath
     protected List<String> generalizeExpression(List<List<String>> recordExpressions) {
         if (recordExpressions == null || recordExpressions.size() == 0) return null;
+
+        for (List<String> recordExpression : recordExpressions) { //填充所有未唯一判断出的模板
+            for (int i = 0; i < recordExpression.size(); i++) {
+                String itemExpression = recordExpression.get(i);
+                if (itemExpression != null && itemExpression.startsWith(LATERDISPOSETAG)) {
+                    List<String> expressions = new ArrayList<>();
+                    Elements elements = text2Node(itemExpression.replaceFirst(LATERDISPOSETAG, ""));
+                    elements.forEach(element -> expressions.add(getExpression(element)));
+                    recordExpression.set(i, mostSimilarExpression(expressions, recordExpression));
+                }
+            }
+        }
+
         List<String> itemExpressions = new ArrayList<>();
         for (int j = 0; j < recordExpressions.get(0).size(); j++) {
             String str = null;
             for (int i = 0; i < recordExpressions.size(); i++) {
                 String temp = recordExpressions.get(i).get(j);
                 if (str == null) str = temp;
-                else if (temp != null) {
-                    if (temp.startsWith(LATERDISPOSETAG)) {
-                        List<String> expressions = new ArrayList<>();
-                        Elements elements = text2Node(temp.replaceFirst(LATERDISPOSETAG, ""));
-                        elements.forEach(element -> expressions.add(getExpression(element)));
-                        temp = mostSimilarExpression(expressions, recordExpressions.get(i));
-                    }
-                    str = SimilarityHelper.findCommmonPrefix(str, temp);
-                }
+                else if (temp != null) str = SimilarityHelper.findCommmonPrefix(str, temp);
             }
             itemExpressions.add(str);
         }

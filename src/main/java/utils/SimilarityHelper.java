@@ -14,7 +14,7 @@ public class SimilarityHelper {
         String s = findCommmonPrefix(path1, path2);
         if ("".equals(s)) return 0;
         //s.nodeCount/path1.nodeCount
-        return s.split(">").length / path1.split(">").length;
+        return s.split(">").length / (double) path1.split(">").length;
     }
 
     public static String findCommmonPrefix(String str1, String str2) {
